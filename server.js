@@ -25,16 +25,6 @@ async function getTemperatureData() {
   }
 }
 
-async function getSavedData() {
-  try {
-    const [rows] = await pool.query('SELECT time, temperature1, temperature2, temperature3, temperature4, temperature5, temperature6,mean_temperature FROM temperature_save ORDER BY time DESC');
-    return rows;
-  } catch (error) {
-    console.error('Error fetching data from MySQL:', error);
-    return [];
-  }
-}
-
 // 渲染首页
 app.get('/', async (req, res) => {
   try {
@@ -46,15 +36,43 @@ app.get('/', async (req, res) => {
   }
 });
 
+async function getSavedData(startTime, endTime) {
+  try {
+    let query = 'SELECT time, temperature1, temperature2, temperature3, temperature4, temperature5, temperature6, mean_temperature FROM temperature_save ORDER BY time DESC';
+    let params = [];
+
+    if (startTime && endTime) {
+      query = 'SELECT time, temperature1, temperature2, temperature3, temperature4, temperature5, temperature6, mean_temperature FROM temperature_save WHERE time BETWEEN ? AND ? ORDER BY time DESC';
+      params = [startTime, endTime];
+    }
+
+    const [rows] = await pool.query(query, params);
+    return rows;
+  } catch (error) {
+    console.error('Error fetching data from MySQL:', error);
+    return [];
+  }
+}
+
 app.get('/save', async (req, res) => {
   try {
-    const data = await getSavedData();
-    res.render('save', { data: data });
+    const { start_time, end_time } = req.query;
+    let startTime = null;
+    let endTime = null;
+
+    if (start_time && end_time) {
+      startTime = new Date(start_time);
+      endTime = new Date(end_time);
+    }
+
+    const data = await getSavedData(startTime, endTime);
+    res.render('save', { data: data,startTime,endTime}); // 使用 res.render 渲染页面
   } catch (error) {
     console.error('Error rendering save page:', error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 app.post('/add-temperature', async (req, res) => {
   try {

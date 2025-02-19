@@ -20,14 +20,12 @@
       padding: 20px 0;
       text-align: center;
       font-size: 2rem;
-      align-items: center;
     }
 
     header .save-button {
       background-color: #388E3C; 
       color: white;
       padding: 20px;
-      height: 100%;
       font-size: 2rem;
       cursor: pointer;
       text-align: center;
@@ -78,20 +76,57 @@
       color: #e74c3c;
       padding: 20px;
     }
-    
+
+    .filter-form {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .filter-form input {
+      margin: 0 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .filter-form button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .filter-form button:hover {
+      background-color: #388E3C;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Temperature Monitor</h1>
+    <h1>温度监测</h1>
     <div class="save-button" onclick="window.location.href='/'">Go To Index</div>
   </header>
 
   <main>
+    <div class="container">
+        <% if (startTime && endTime) { %>
+            <h2>Current filter: <%= startTime.getFullYear() %>/<%= String(startTime.getMonth() + 1).padStart(2, '0') %>/<%= String(startTime.getDate()).padStart(2, '0') %> <%= String(startTime.getHours()).padStart(2, '0') %>:<%= String(startTime.getMinutes()).padStart(2, '0') %> -> 
+                <%= endTime.getFullYear() %>/<%= String(endTime.getMonth() + 1).padStart(2, '0') %>/<%= String(endTime.getDate()).padStart(2, '0') %> <%= String(endTime.getHours()).padStart(2, '0') %>:<%= String(endTime.getMinutes()).padStart(2, '0') %></h2>
+          <% } else { %>
+            <h2>未选取时间范围，当前显示全部数据</h2>
+          <% } %>
+      <form class="filter-form" id="filterForm" action="/save" method="GET">
+        <input type="datetime-local" name="start_time" required>
+        <input type="datetime-local" name="end_time" required>
+        <button type="submit">Filter</button>
+      </form>
 
-      <% if (Array.isArray(data) && data.length > 0) { %>
-        <h2>All Temperature Records</h2>
-        <table>
+      <h2>温度数据</h2>
+      <div id="dataContainer">
+        <table id="dataTable">
           <thead>
             <tr>
               <th>Time</th>
@@ -104,25 +139,26 @@
               <th>Temperature 6</th>
             </tr>
           </thead>
-          <tbody>
-            <% data.forEach(item => { %>
-              <tr>
-                <td><%= new Date(item.time).toISOString().slice(0, 19).replace("T", " ") %></td>
-                <td><%= item.mean_temperature %></td>
-                <td><%= item.temperature1 %></td>
-                <td><%= item.temperature2 %></td>
-                <td><%= item.temperature3 %></td>
-                <td><%= item.temperature4 %></td>
-                <td><%= item.temperature5 %></td>
-                <td><%= item.temperature6 %></td>
-              </tr>
-            <% }); %>
+          <tbody id="dataBody">
+            <% if (Array.isArray(data) && data.length > 0) { %>
+              <% data.forEach(item => { %>
+                <tr>
+                  <td><% const date = new Date(item.time); %><%= date.getFullYear() %>/<%= String(date.getMonth() + 1).padStart(2, '0') %>/<%= String(date.getDate()).padStart(2, '0') %> <%= String(date.getHours()).padStart(2, '0') %>:<%= String(date.getMinutes()).padStart(2, '0') %></td>
+                  <td><%= item.mean_temperature %></td>
+                  <td><%= item.temperature1 %></td>
+                  <td><%= item.temperature2 %></td>
+                  <td><%= item.temperature3 %></td>
+                  <td><%= item.temperature4 %></td>
+                  <td><%= item.temperature5 %></td>
+                  <td><%= item.temperature6 %></td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr><td colspan="8" class="no-data">No data available.</td></tr>
+            <% } %>
           </tbody>
         </table>
-      <% } else { %>
-        <p class="no-data">No data available.</p>
-      <% } %>
-
+      </div>
     </div>
   </main>
 </body>

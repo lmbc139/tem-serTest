@@ -97,7 +97,7 @@
 </head>
 <body>
   <header>
-    <h1>Temperature Monitor</h1>
+    <h1>温度监测</h1>
     <div class="save-button" onclick="window.location.href='/save'">Go To Save</div>
   </header>
 
@@ -109,15 +109,16 @@
     <div id="data-container" class="container">
       <% if (Array.isArray(data) && data.length > 0) { %>
         <% for (let i = data.length - 1; i >= 0; i--) { %>
-            <div class="data-item">
-                <p><strong>
-                    <%= new Date(data[i].time).toISOString().slice(0, 19).replace("T", " ") %>:
-                </strong> <%= data[i].temperature %>°C</p>
-            </div>
+          <div class="data-item">
+            <p><strong>
+              <% const date = new Date(data[i].time); %>
+              <%= date.getFullYear() %>/<%= String(date.getMonth() + 1).padStart(2, '0') %>/<%= String(date.getDate()).padStart(2, '0') %> <%= String(date.getHours()).padStart(2, '0') %>:<%= String(date.getMinutes()).padStart(2, '0') %>
+            </strong> <%= data[i].temperature %>°C</p>
+          </div>
         <% } %>
-    <% } else { %>
+      <% } else { %>
         <p class="no-data">No data available.</p>
-    <% } %>
+      <% } %>
     </div>
   </main>
 
@@ -131,8 +132,9 @@
 
       <% if (Array.isArray(data) && data.length > 0) { %>
         <% data.forEach(item => { %>
-
-          labels.push('<%= new Date(item.time).toISOString().slice(0, 10) %>\n<%= new Date(item.time).toISOString().slice(11, 19) %>');
+          <% const date = new Date(item.time); %>
+          labels.push(`<%= date.getFullYear() %>/<%= String(date.getMonth() + 1).padStart(2, '0') %>/<%= String(date.getDate()).padStart(2, '0') %> <%= String(date.getHours()).padStart(2, '0') %>:<%= String(date.getMinutes()).padStart(2, '0') %>`);
+          
           temperatures.push(<%= item.temperature %>);
         <% }); %>
       <% } %>
