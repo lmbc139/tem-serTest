@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temperature Monitor</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f4f8;
+      color: #333;
+    }
+
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 2rem;
+      align-items: center;
+    }
+
+    header .save-button {
+      background-color: #388E3C; 
+      color: white;
+      padding: 20px;
+      height: 100%;
+      font-size: 2rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column; 
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .no-data {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #e74c3c;
+      padding: 20px;
+    }
+    
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Temperature Monitor</h1>
+    <div class="save-button" onclick="window.location.href='/'">Go To Index</div>
+  </header>
+
+  <main>
+
+      <% if (Array.isArray(data) && data.length > 0) { %>
+        <h2>All Temperature Records</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Mean Temperature</th>
+              <th>Temperature 1</th>
+              <th>Temperature 2</th>
+              <th>Temperature 3</th>
+              <th>Temperature 4</th>
+              <th>Temperature 5</th>
+              <th>Temperature 6</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% data.forEach(item => { %>
+              <tr>
+                <td><%= new Date(item.time).toISOString().slice(0, 19).replace("T", " ") %></td>
+                <td><%= item.mean_temperature %></td>
+                <td><%= item.temperature1 %></td>
+                <td><%= item.temperature2 %></td>
+                <td><%= item.temperature3 %></td>
+                <td><%= item.temperature4 %></td>
+                <td><%= item.temperature5 %></td>
+                <td><%= item.temperature6 %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p class="no-data">No data available.</p>
+      <% } %>
+
+    </div>
+  </main>
+</body>
+</html>
